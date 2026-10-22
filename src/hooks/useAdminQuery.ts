@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { UnauthorizedError } from '../api/http'
 import { useSession } from '../auth/session'
 
 export interface QueryState<T> {
@@ -14,7 +13,8 @@ export interface QueryState<T> {
 /**
  * Busca dados de uma rota /admin com a chave da sessão.
  *
- * - Chave recusada (401) encerra a sessão e volta ao login.
+ * - Chave recusada (401) por um serviço vira erro daquela página, sem derrubar a sessão: um serviço
+ *   ainda sem as rotas /admin, ou com outra chave, não pode impedir o uso dos outros.
  * - Ao trocar os parâmetros, a requisição anterior é cancelada: resposta velha não sobrescreve a nova.
  * - Com refreshMs, recarrega sozinha mantendo o dado anterior na tela enquanto busca.
  * - enabled=false deixa a busca parada até ser pedida (relatório, LangSmith).
@@ -24,7 +24,7 @@ export function useAdminQuery<T>(
   deps: unknown[],
   options: { refreshMs?: number; enabled?: boolean } = {},
 ): QueryState<T> {
-  const { adminKey, logout } = useSession()
+  const { adminKey } = useSession()
   const { refreshMs, enabled = true } = options
   const [data, setData] = useState<T | null>(null)
   const [error, setError] = useState<Error | null>(null)
@@ -59,10 +59,6 @@ export function useAdminQuery<T>(
         if (controle.signal.aborted) {
           return
         }
-        if (erro instanceof UnauthorizedError) {
-          logout('Sua chave foi recusada. Entre de novo.')
-          return
-        }
         setError(erro instanceof Error ? erro : new Error(String(erro)))
       })
       .finally(() => {
@@ -71,7 +67,7 @@ export function useAdminQuery<T>(
         }
       })
     return () => controle.abort()
-  }, [adminKey, enabled, consultaAtual, logout])
+  }, [adminKey, enabled, consultaAtual])
 
   useEffect(() => {
     if (!refreshMs || !enabled) {

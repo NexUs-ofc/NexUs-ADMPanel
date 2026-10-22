@@ -1,13 +1,15 @@
 /**
- * Chamadas aos serviços com a chave do painel. Separa os três jeitos de falhar que a tela trata
- * diferente: chave recusada (volta ao login), servidor sem chave configurada e rede fora.
+ * Chamadas aos serviços com a chave do painel. Separa os três jeitos de falhar que a tela explica
+ * diferente: chave recusada pelo serviço, servidor sem chave configurada e rede ou CORS.
  */
 
 export const ADMIN_KEY_HEADER = 'X-Admin-Key'
 
 export class UnauthorizedError extends Error {
   constructor() {
-    super('Chave do painel inválida ou expirada.')
+    super(
+      'O serviço recusou a chave (401). Confira se a ADMIN_API_KEY do servidor é a mesma do painel e se a versão com as rotas /admin já está publicada.',
+    )
     this.name = 'UnauthorizedError'
   }
 }
@@ -24,7 +26,9 @@ export class HttpError extends Error {
 
 export class NetworkError extends Error {
   constructor(baseUrl: string) {
-    super(`Não foi possível falar com ${baseUrl}. Confira o endereço e o CORS do serviço.`)
+    super(
+      `Não foi possível falar com ${baseUrl}. O serviço pode estar fora do ar ou barrando a origem do painel (CORS_ALLOWED_ORIGINS).`,
+    )
     this.name = 'NetworkError'
   }
 }
