@@ -6,7 +6,6 @@ import {
   BarChartIcon,
   BellIcon,
   GlobeIcon,
-  LogoIcon,
   LogOutIcon,
   MenuIcon,
   SparklesIcon,
@@ -41,9 +40,7 @@ export function Layout() {
     <div className="estrutura">
       <nav className={`menu${aberto ? ' menu--aberto' : ''}`} aria-label="Serviços">
         <div className="menu__marca">
-          <span className="menu__logo">
-            <LogoIcon size={18} />
-          </span>
+          <img className="menu__logo" src="/logo-icon.svg" alt="" width={30} height={30} />
           Painel ADM
         </div>
         <ul className="menu__lista">

@@ -116,12 +116,3 @@ export const PrinterIcon = (p: IconProps) => (
     <rect width="12" height="8" x="6" y="14" />
   </Base>
 )
-
-/** Marca do painel: os três círculos do logo do Ceris. */
-export const LogoIcon = (p: IconProps) => (
-  <Base strokeWidth={2.2} {...p}>
-    <circle cx="8.5" cy="13.5" r="4" />
-    <circle cx="15.5" cy="13.5" r="4" />
-    <circle cx="12" cy="8" r="3" />
-  </Base>
-)

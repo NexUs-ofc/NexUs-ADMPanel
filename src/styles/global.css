@@ -25,7 +25,11 @@
   --sidebar: 240px;
   --topo: 64px;
 
-  font-family: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
+  --fonte-texto: 'Montserrat', system-ui, 'Segoe UI', sans-serif;
+  /* Huninn é a fonte das telas de entrada e da marca, como no app mobile. */
+  --fonte-marca: 'Huninn', 'Montserrat', system-ui, sans-serif;
+
+  font-family: var(--fonte-texto);
   font-weight: 500;
   color: var(--texto);
   background: var(--lavanda);
@@ -87,6 +91,8 @@ code,
 }
 
 .login__cartao {
+  font-family: var(--fonte-marca);
+  font-weight: 400;
   position: relative;
   z-index: 1;
   width: min(100%, 524px);
@@ -99,7 +105,7 @@ code,
 .login__titulo {
   text-align: center;
   font-size: 34px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.5px;
 }
 
@@ -117,7 +123,7 @@ code,
 }
 
 .login__rotulo {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 15px;
 }
 
@@ -234,18 +240,15 @@ code,
   gap: 10px;
   padding: 4px 8px 22px;
   color: var(--roxo-titulo);
-  font-weight: 600;
-  font-size: 19px;
+  font-family: var(--fonte-marca);
+  font-weight: 400;
+  font-size: 20px;
 }
 
 .menu__logo {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
-  background: var(--roxo);
-  display: grid;
-  place-items: center;
-  color: var(--branco);
+  flex-shrink: 0;
 }
 
 .menu__lista {
