@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_IA_API_URL?: string
   readonly VITE_BI_IA_API_URL?: string
   readonly VITE_DEMO_MODE?: string
+  readonly VITE_ADMIN_KEY_SHA256?: string
 }
 
 interface ImportMeta {

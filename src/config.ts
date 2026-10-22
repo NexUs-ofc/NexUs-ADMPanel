@@ -30,6 +30,9 @@ function url(value: string | undefined): string {
 
 export const DEMO_MODE = String(import.meta.env.VITE_DEMO_MODE).toLowerCase() === 'true'
 
+/** SHA-256 da chave do painel. Configurado, o login é conferido aqui e não nos serviços. */
+export const ADMIN_KEY_SHA256 = (import.meta.env.VITE_ADMIN_KEY_SHA256 ?? '').trim()
+
 /** Ordem do menu, igual ao desenho. */
 export const SERVICES: ServiceConfig[] = [
   {

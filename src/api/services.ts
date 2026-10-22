@@ -1,4 +1,5 @@
-import { DEMO_MODE, SERVICES, type ServiceConfig } from '../config'
+import { matchesKeyHash } from '../auth/keyHash'
+import { ADMIN_KEY_SHA256, DEMO_MODE, SERVICES, type ServiceConfig } from '../config'
 import { demoIaDashboard, demoIaReport, demoLangsmith, demoSpringDashboard } from './demo'
 import { getJson, HttpError, NetworkError, UnauthorizedError } from './http'
 import { normalizeLangsmith } from './normalize'
@@ -62,6 +63,14 @@ export type LoginResult =
 export async function checkKey(key: string): Promise<LoginResult> {
   if (DEMO_MODE) {
     return atraso({ ok: true, servico: 'demonstração' })
+  }
+
+  // Com o hash configurado, o próprio painel confere a chave: o login funciona mesmo com os
+  // serviços fora do ar ou ainda sem as rotas /admin. Os dados continuam vindo de cada serviço.
+  if (ADMIN_KEY_SHA256) {
+    return (await matchesKeyHash(key, ADMIN_KEY_SHA256))
+      ? { ok: true, servico: 'painel' }
+      : { ok: false, motivo: 'chave', mensagem: 'Chave de acesso inválida.' }
   }
 
   const configurados = SERVICES.filter((service) => service.baseUrl !== '')
