@@ -28,6 +28,20 @@ function url(value: string | undefined): string {
   return (value ?? '').trim().replace(/\/+$/, '')
 }
 
+/** Mesmo prefixo do proxy em vite.config.ts. */
+export const PROXY_PREFIX = '/__servico'
+
+/**
+ * Endereço que o navegador chama. No npm run dev passa pelo proxy do Vite, que repassa ao serviço:
+ * assim o CORS dos serviços não barra o painel local. No build, chama o serviço direto.
+ */
+export function enderecoDeChamada(id: string, endereco: string): string {
+  if (!endereco || !import.meta.env.DEV || typeof window === 'undefined') {
+    return endereco
+  }
+  return `${window.location.origin}${PROXY_PREFIX}/${id}`
+}
+
 export const DEMO_MODE = String(import.meta.env.VITE_DEMO_MODE).toLowerCase() === 'true'
 
 /** SHA-256 da chave do painel. Configurado, o login é conferido aqui e não nos serviços. */

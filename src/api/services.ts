@@ -1,9 +1,13 @@
 import { matchesKeyHash } from '../auth/keyHash'
-import { ADMIN_KEY_SHA256, DEMO_MODE, SERVICES, type ServiceConfig } from '../config'
+import { ADMIN_KEY_SHA256, DEMO_MODE, enderecoDeChamada, SERVICES, type ServiceConfig } from '../config'
 import { demoIaDashboard, demoIaReport, demoLangsmith, demoSpringDashboard } from './demo'
 import { getJson, HttpError, NetworkError, UnauthorizedError } from './http'
 import { normalizeLangsmith } from './normalize'
 import type { AdminSession, IaDashboard, IaReport, LangsmithRaw, LangsmithSection, SpringDashboard } from './types'
+
+function base(service: ServiceConfig): string {
+  return enderecoDeChamada(service.id, service.baseUrl)
+}
 
 function atraso<T>(valor: T, ms = 350): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(valor), ms))
@@ -18,7 +22,7 @@ export function fetchSpringDashboard(
   if (DEMO_MODE) {
     return atraso(demoSpringDashboard(service, minutos))
   }
-  return getJson<SpringDashboard>(service.baseUrl, '/admin/metrics', key, { minutos }, signal)
+  return getJson<SpringDashboard>(base(service), '/admin/metrics', key, { minutos }, signal)
 }
 
 export function fetchIaDashboard(
@@ -30,14 +34,14 @@ export function fetchIaDashboard(
   if (DEMO_MODE) {
     return atraso(demoIaDashboard(service, dias))
   }
-  return getJson<IaDashboard>(service.baseUrl, '/admin/metrics', key, { dias }, signal)
+  return getJson<IaDashboard>(base(service), '/admin/metrics', key, { dias }, signal)
 }
 
 export function fetchIaReport(service: ServiceConfig, key: string, dias: number, signal?: AbortSignal): Promise<IaReport> {
   if (DEMO_MODE) {
     return atraso(demoIaReport(service, dias), 700)
   }
-  return getJson<IaReport>(service.baseUrl, '/admin/report', key, { dias }, signal)
+  return getJson<IaReport>(base(service), '/admin/report', key, { dias }, signal)
 }
 
 export async function fetchLangsmith(
@@ -48,7 +52,7 @@ export async function fetchLangsmith(
 ): Promise<LangsmithSection> {
   const raw = DEMO_MODE
     ? await atraso(demoLangsmith(service, dias), 1200)
-    : await getJson<LangsmithRaw>(service.baseUrl, '/admin/langsmith', key, { dias }, signal)
+    : await getJson<LangsmithRaw>(base(service), '/admin/langsmith', key, { dias }, signal)
   return normalizeLangsmith(raw)
 }
 
@@ -83,7 +87,7 @@ export async function checkKey(key: string): Promise<LoginResult> {
   }
 
   const tentativas = await Promise.allSettled(
-    configurados.map((service) => getJson<AdminSession>(service.baseUrl, '/admin/session', key)),
+    configurados.map((service) => getJson<AdminSession>(base(service), '/admin/session', key)),
   )
 
   const aceita = tentativas.find((tentativa) => tentativa.status === 'fulfilled')
